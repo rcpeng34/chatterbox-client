@@ -1,8 +1,8 @@
 var app = {
   init: function() {
-    //Do something here
     this.server = 'https://api.parse.com/1/classes/chatterbox';
     this.fetch();
+    //setInterval
   },
   send: function(message) {
     $.ajax({
@@ -38,7 +38,7 @@ var app = {
     });
   },
   display: function(msgArray) {
-    for (var i = 0; i < msgArray.length; i++) {
+    for (var i = msgArray.length-1; i >= 0; i--) {
       var message = msgArray[i];
       // debugger;
       // console.log(message);
@@ -53,6 +53,9 @@ var app = {
       $messageNode.append($textNode);
       $('#messages').append($messageNode);
     }
+  },
+  refresh: function() {
+    //add functionality here
   }
 };
 
