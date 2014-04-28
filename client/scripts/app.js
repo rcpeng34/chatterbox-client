@@ -2,7 +2,11 @@ var app = {
   init: function() {
     this.server = 'https://api.parse.com/1/classes/chatterbox';
     this.fetch();
-    //setInterval
+    var that = this;
+    setInterval(function() {
+      console.log('fetching new shiz');
+      that.fetch();
+    }, 5000);
   },
   send: function(message) {
     $.ajax({
@@ -38,13 +42,23 @@ var app = {
     });
   },
   display: function(msgArray) {
-    for (var i = msgArray.length-1; i >= 0; i--) {
-      var message = msgArray[i];
-      // debugger;
-      // console.log(message);
+    var currentNewest = $('.chat')[0] || null;
+    var refreshedArray;
+    if (currentNewest === null) {
+      refreshedArray = msgArray;
+    } else {
+      for (var i = 0; i < msgArray.length; i++) {
+        if (msgArray[i].objectId === $(currentNewest).data('message-id')) {
+          refreshedArray = msgArray.slice(i+1);
+        }
+      }
+    }
+
+    for (var i = refreshedArray.length-1; i >= 0; i--) {
+      var message = refreshedArray[i];
       var username = message.username;
       var text = message.text;
-      var $messageNode = $('<div class = "chat" ></div>');
+      var $messageNode = $('<div class = "chat" data-message-id = "' + message.objectId + '"></div>');
       var $usernameNode = $('<div class = "username"></div>');
       $usernameNode.text(username);
       var $textNode = $('<div class = "text"></div>');
@@ -53,9 +67,6 @@ var app = {
       $messageNode.append($textNode);
       $('#messages').append($messageNode);
     }
-  },
-  refresh: function() {
-    //add functionality here
   }
 };
 
