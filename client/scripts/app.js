@@ -3,8 +3,8 @@ var app = {
     this.server = 'https://api.parse.com/1/classes/chatterbox';
     this.fetch();
     var that = this;
+    this.currentMessages;
     setInterval(function() {
-      console.log('fetching new shiz');
       that.fetch();
     }, 5000);
   },
@@ -28,11 +28,9 @@ var app = {
     $.ajax({
       // always use this url
       type: 'GET',
-      url: app.server,
+      url: app.server + '?order=-createdAt',
       contentType: 'application/json',
       success: function (data) {
-        console.log('chatterbox: Message received');
-        console.log(data);
         app.display(data.results);
       },
       error: function (data) {
@@ -42,30 +40,22 @@ var app = {
     });
   },
   display: function(msgArray) {
-    var currentNewest = $('.chat')[0] || null;
-    var refreshedArray;
-    if (currentNewest === null) {
-      refreshedArray = msgArray;
-    } else {
-      for (var i = 0; i < msgArray.length; i++) {
-        if (msgArray[i].objectId === $(currentNewest).data('message-id')) {
-          refreshedArray = msgArray.slice(i+1);
-        }
-      }
-    }
-
-    for (var i = refreshedArray.length-1; i >= 0; i--) {
-      var message = refreshedArray[i];
+    $('.chat').remove();
+    for (var i = msgArray.length-1; i >= 0; i--) {
+      var message = msgArray[i];
       var username = message.username;
       var text = message.text;
       var $messageNode = $('<div class = "chat" data-message-id = "' + message.objectId + '"></div>');
       var $usernameNode = $('<div class = "username"></div>');
       $usernameNode.text(username);
       var $textNode = $('<div class = "text"></div>');
-      $textNode.text(text);
+      $textNode.text(text + " @: " + message.createdAt);
       $messageNode.append($usernameNode);
       $messageNode.append($textNode);
       $('#messages').append($messageNode);
+      if ($('.chat').length > 100) {
+        $('.chat:last-child').remove();
+      }
     }
   }
 };
