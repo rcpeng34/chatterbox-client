@@ -4,8 +4,9 @@ var app = {
     this.fetch();
     var that = this;
     this.currentMessages;
+    this.roomname;
     setInterval(function() {
-      that.fetch();
+      that.fetch(that.roomname);
     }, 5000);
 
     $("#enter").on('click', function() {
@@ -20,10 +21,6 @@ var app = {
     });
 
     this.getRoomName();
-
-    $("#roomname").on('click', function() {
-      //filter messages by room
-    });
   },
 
   send: function(message) {
@@ -42,15 +39,21 @@ var app = {
       }
     });
   },
-  fetch: function() {
+  fetch: function(room) {
+    var searchData;
+    if (room === undefined) {
+      searchData = {order: '-createdAt'};
+    } else {
+      searchData = {
+        order: '-createdAt',
+        where: {roomname: room}
+      };
+    }
     $.ajax({
       // always use this url
       type: 'GET',
       url: app.server,
-      data: {
-        order: '-createdAt',
-        where: {roomname: '4chan'}
-      },
+      data: searchData,
       contentType: 'application/json',
       success: function (data) {
         app.display(data.results);
@@ -100,8 +103,12 @@ var app = {
   },
   buildSidebar: function(rooms) {
     for (var i = 0; i < rooms.length; i++) {
-      $('#sidebar').append('<div id = roomname>' + rooms[i] + '</div>');
+      $('#sidebar').append('<div class = roomname>' + rooms[i] + '</div>');
     }
+    $(".roomname").on('click', function() {
+      //update roomname variable
+      app.roomname = $(this).text();
+    });
   }
 };
 
