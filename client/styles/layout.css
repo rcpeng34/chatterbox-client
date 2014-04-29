@@ -23,15 +23,22 @@ body {
     font-family: arial, sans-serif;
 }
 
+.container {
+	margin-top: 30px;
+}
+
 #main {
-    width: 500px;
     margin: auto;
     text-align: left;
     background: white;
-    padding: 50px 60px;
+    padding: 0px 35px;
     border: solid #ddd;
     border-width: 0 1px 1px 1px;
     float: left;
+}
+
+#main, #left, #right {
+	padding-top: 35px;
 }
 
 #main h1 {
@@ -68,7 +75,7 @@ body {
 	margin: auto;
 	text-align: left;
 	background: white;
-	padding: 50px 60px;
+	padding: 25px 35px;
 	border: solid #ddd;
 	border-width: 0 1px 1px 1px;
 	float: left;
