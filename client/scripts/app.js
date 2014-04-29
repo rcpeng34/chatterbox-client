@@ -5,8 +5,10 @@ var app = {
     var that = this;
     this.currentMessages;
     this.roomname;
+    this.person;
+    this.friendslist = ['All Users'];
     setInterval(function() {
-      that.fetch(that.roomname);
+      that.fetch(that.roomname, that.person);
       that.getRoomName();
     }, 5000);
 
@@ -22,6 +24,7 @@ var app = {
     });
 
     this.getRoomName();
+    this.buildFriendbar();
   },
 
   send: function(message) {
@@ -40,16 +43,17 @@ var app = {
       }
     });
   },
-  fetch: function(room) {
-    var searchData;
-    if (room === undefined) {
-      searchData = {order: '-createdAt'};
-    } else {
-      searchData = {
-        order: '-createdAt',
-        where: {roomname: room}
-      };
+  fetch: function(room, person) {
+    console.log(room, person);
+    var searchData = {order: '-createdAt'};
+    searchData.where = {};
+    if (room) {
+      searchData.where.roomname = app.roomname;
     }
+    if (person) {
+      searchData.where.username = app.person;
+    }
+    console.log(searchData);
     $.ajax({
       // always use this url
       type: 'GET',
@@ -116,10 +120,28 @@ var app = {
     $('.roomname').on('click', function() {
       //update roomname variable
       app.roomname = $(this).text();
+      app.person = null;
+      app.fetch(app.roomname, null);
     });
     $('#makeRoom').on('click', function() {
       //create a new room
       app.roomname = $('#newRoomName').val();
+      app.fetch(app.roomname, null);
+    });
+  },
+
+  buildFriendbar: function() {
+    // if you click on add friend, then you add friend and append it to the dom
+    $('#addFriend').on('click', function() {
+      // escape the text value
+      var newFriend = $('<div class = friendname></div>').text($('#newFriendName').val());
+      // add friend to the friendbar
+      $('#friendbar').append(newFriend);
+      $('.friendname').on('click', function(){
+        app.person = $(this).text();
+        app.roomname = null;
+        app.fetch(null, app.person);
+      });
     });
   }
 };
