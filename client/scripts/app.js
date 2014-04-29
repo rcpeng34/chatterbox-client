@@ -13,10 +13,16 @@ var app = {
       var message = {
         'username': window.location.search.split('=')[1],
         'text': $('textarea').val(),
-        'roomname': 'main'
+        'roomname': 'NewZealand'
       };
       console.log('calling send');
       app.send(message);
+    });
+
+    this.getRoomName();
+
+    $("#roomname").on('click', function() {
+      //filter messages by room
     });
   },
 
@@ -40,7 +46,11 @@ var app = {
     $.ajax({
       // always use this url
       type: 'GET',
-      url: app.server + '?order=-createdAt',
+      url: app.server,
+      data: {
+        order: '-createdAt',
+        where: {roomname: '4chan'}
+      },
       contentType: 'application/json',
       success: function (data) {
         app.display(data.results);
@@ -68,6 +78,29 @@ var app = {
       if ($('.chat').length > 100) {
         $('.chat:last-child').remove();
       }
+    }
+  },
+  getRoomName: function() {
+    var rooms = {};
+    var that = this;
+    $.ajax({
+      type: 'GET',
+      url: app.server,
+      data: {
+        keys: 'roomname'
+      },
+      contentType: 'application/json',
+      success: function(data) {
+        for(var i = 0; i < data.results.length; i++) {
+          rooms[data.results[i].roomname] = true;
+        }
+        that.buildSidebar(Object.keys(rooms));
+      }
+    });
+  },
+  buildSidebar: function(rooms) {
+    for (var i = 0; i < rooms.length; i++) {
+      $('#sidebar').append('<div id = roomname>' + rooms[i] + '</div>');
     }
   }
 };

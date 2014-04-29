@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>chatterbox</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/skeleton.css">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/layout.css">
 
     <!-- dependencies -->
     <script src="bower_components/jquery/jquery.min.js"></script>
@@ -12,11 +14,22 @@
     <script src="scripts/config.js"></script>
   </head>
   <body>
-    <div id="main">
-      <h1>chatterbox</h1>
-      <textarea row="5" col="5"></textarea>
-      <button id="enter">Enter</button>
-      <div id="messages">
+    <div class="container">
+      <div class="row">
+        <div class="twelve columns">
+          <div id="main">
+            <h2>chatterbox</h2>
+            <textarea id="textbox"></textarea>
+            <button id="enter">Enter</button>
+            <div id="messages">
+            </div>
+          </div>
+        </div>
+        <div class="four columns">
+          <div id="sidebar">
+            <h2>chatrooms</h2>
+          </div>
+        </div>
       </div>
     </div>
     <script src="scripts/app.js"></script>
