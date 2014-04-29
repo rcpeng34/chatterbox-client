@@ -2,15 +2,15 @@
 // Have on clicks in one place
 
 var app = {
+  server: 'https://api.parse.com/1/classes/chatterbox',
+  currentMessages: '',
+  roomname: null,
+  person: null,
+  friendslist: ['All Users'],
   init: function() {
     var that = this;
-    this.server = 'https://api.parse.com/1/classes/chatterbox';
-    this.fetch();
-    this.currentMessages;
-    this.roomname;
-    this.person;
-    this.friendslist = ['All Users'];
 
+    this.fetch();
     // Main fetch logic
     setInterval(function() {
       that.fetch(that.roomname, that.person);
@@ -59,7 +59,7 @@ var app = {
       where: {}
     };
     if (room) {
-      searchData.where.roomname = app.roomname;
+      searchData.where.roomname = app.roomname.trim();
     }
     if (person) {
       searchData.where.username = app.person;
@@ -95,13 +95,6 @@ var app = {
       };
 
       var html = engine.render('messageTemplate', data);
-      // var $messageNode = $('<div class = "chat" data-message-id = "' + message.objectId + '"></div>');
-      // var $usernameNode = $('<div class = "username"></div>');
-      // $usernameNode.text(username + ' in chatroom: ' + message.roomname);
-      // var $textNode = $('<div class = "text"></div>');
-      // $textNode.text(text + " @: " + message.createdAt);
-      // $messageNode.append($usernameNode);
-      // $messageNode.append($textNode);
       $('#messages').append(html);
       if ($('.chat').length > 100) {
         $('.chat:last-child').remove();
@@ -114,13 +107,15 @@ var app = {
     $('.allRooms').on('click', function() {
       app.roomname = undefined;
     });
+
     for (var i = 0; i < rooms.length; i++) {
-      var roomNode = $('<div class = roomname></div>').text(rooms[i]);
-      $('#sidebar').append(roomNode);
+      var newRoom = engine.render('roomTemplate', { roomname: rooms[i]});
+      $('#sidebar').append(newRoom);
     }
     $('.roomname').on('click', function() {
       //update roomname variable
       app.roomname = $(this).text();
+      console.log(app.roomname);
       app.person = null;
       app.fetch(app.roomname, null);
     });
@@ -132,11 +127,13 @@ var app = {
   },
 
   buildFriendbar: function() {
+    // set all users on click to search for no specific person
+    $('.allusers').on('click', function() { app.roomname = null; });
     // if you click on add friend, then you add friend and append it to the dom
     $('#addFriend').on('click', function() {
       // escape the text value
-      var newFriend = $('<div class = friendname></div>').text($('#newFriendName').val());
-      // add friend to the friendbar
+      var data = { friendname: $('#newFriendName').val() };
+      var newFriend = engine.render('friendTemplate', data);
       $('#friendbar').append(newFriend);
       $('.friendname').on('click', function(){
         app.person = $(this).text();
