@@ -1,25 +1,29 @@
+// Use our own templating engine
+// Have on clicks in one place
+
 var app = {
   init: function() {
+    var that = this;
     this.server = 'https://api.parse.com/1/classes/chatterbox';
     this.fetch();
-    var that = this;
     this.currentMessages;
     this.roomname;
     this.person;
     this.friendslist = ['All Users'];
+
+    // Main fetch logic
     setInterval(function() {
       that.fetch(that.roomname, that.person);
       that.getRoomName();
     }, 5000);
 
+    // Send logic
     $("#enter").on('click', function() {
-      //send the message
       var message = {
         'username': window.location.search.split('=')[1],
         'text': $('textarea').val(),
         'roomname': app.roomname
       };
-      console.log('calling send', message);
       app.send(message);
     });
 
@@ -27,48 +31,56 @@ var app = {
     this.buildFriendbar();
   },
 
-  send: function(message) {
+  // get request data: searchQuery. post data: message.
+  request: function(type, data, callback) {
     $.ajax({
-      // always use this url
-      url: 'https://api.parse.com/1/classes/chatterbox',
-      type: 'POST',
-      data: JSON.stringify(message),
+      url: app.server,
+      type: type,
+      data: data,
       contentType: 'application/json',
-      success: function (data) {
-        console.log('chatterbox: Message sent');
-      },
-      error: function (data) {
-        // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-        console.error('chatterbox: Failed to send message');
+      success: function (response) {
+        if (callback) {
+          callback(response);
+        }
       }
     });
   },
+
+  send: function(message) {
+    app.request('POST', JSON.stringify(message));
+  },
+
   fetch: function(room, person) {
-    console.log(room, person);
-    var searchData = {order: '-createdAt'};
-    searchData.where = {};
+    var searchData = {
+      order: '-createdAt',
+      where: {}
+    };
     if (room) {
       searchData.where.roomname = app.roomname;
     }
     if (person) {
       searchData.where.username = app.person;
     }
-    console.log(searchData);
-    $.ajax({
-      // always use this url
-      type: 'GET',
-      url: app.server,
-      data: searchData,
-      contentType: 'application/json',
-      success: function (data) {
-        app.display(data.results);
-      },
-      error: function (data) {
-        // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-        console.error('chatterbox: Failed to get message');
-      }
+    app.request('GET', searchData, function(response) {
+      app.display(response.results);
     });
   },
+  getRoomName: function() {
+    var that = this;
+    var data = {
+      keys: 'roomname',
+      order: '-createdAt'
+    };
+    app.request('GET', data, function(response) {
+      var rooms = {};
+      for(var i = 0; i < response.results.length; i++) {
+        rooms[response.results[i].roomname] = true;
+      }
+      that.buildSidebar(Object.keys(rooms));
+    });
+  },
+
+
   display: function(msgArray) {
     $('.chat').remove();
     for (var i = 0; i < msgArray.length; i++) {
@@ -87,25 +99,6 @@ var app = {
         $('.chat:last-child').remove();
       }
     }
-  },
-  getRoomName: function() {
-    var rooms = {};
-    var that = this;
-    $.ajax({
-      type: 'GET',
-      url: app.server,
-      data: {
-        keys: 'roomname',
-        order: '-createdAt'
-      },
-      contentType: 'application/json',
-      success: function(data) {
-        for(var i = 0; i < data.results.length; i++) {
-          rooms[data.results[i].roomname] = true;
-        }
-        that.buildSidebar(Object.keys(rooms));
-      }
-    });
   },
   buildSidebar: function(rooms) {
     $('#sidebar > *').remove();

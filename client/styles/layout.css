@@ -38,6 +38,7 @@ body {
 }
 
 #main, #left, #right {
+    width: 100%;
 	padding-top: 35px;
 }
 
@@ -71,14 +72,14 @@ body {
     line-height: 13px;
 }
 
-#sidebar {
+#sidebar, #friendbar {
 	margin: auto;
 	text-align: left;
 	background: white;
 	padding: 25px 35px;
 	border: solid #ddd;
 	border-width: 0 1px 1px 1px;
-	float: left;
+	float: center;
 }
 #textbox {
 	width: 98%;
