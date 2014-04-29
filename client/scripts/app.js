@@ -7,6 +7,7 @@ var app = {
     this.roomname;
     setInterval(function() {
       that.fetch(that.roomname);
+      that.getRoomName();
     }, 5000);
 
     $("#enter").on('click', function() {
@@ -14,9 +15,9 @@ var app = {
       var message = {
         'username': window.location.search.split('=')[1],
         'text': $('textarea').val(),
-        'roomname': 'NewZealand'
+        'roomname': app.roomname
       };
-      console.log('calling send');
+      console.log('calling send', message);
       app.send(message);
     });
 
@@ -90,7 +91,8 @@ var app = {
       type: 'GET',
       url: app.server,
       data: {
-        keys: 'roomname'
+        keys: 'roomname',
+        order: '-createdAt'
       },
       contentType: 'application/json',
       success: function(data) {
@@ -102,12 +104,22 @@ var app = {
     });
   },
   buildSidebar: function(rooms) {
+    $('#sidebar > *').remove();
+    $('#sidebar').append('<div class = allRooms>All</div');
+    $('.allRooms').on('click', function() {
+      app.roomname = undefined;
+    });
     for (var i = 0; i < rooms.length; i++) {
-      $('#sidebar').append('<div class = roomname>' + rooms[i] + '</div>');
+      var roomNode = $('<div class = roomname></div>').text(rooms[i]);
+      $('#sidebar').append(roomNode);
     }
-    $(".roomname").on('click', function() {
+    $('.roomname').on('click', function() {
       //update roomname variable
       app.roomname = $(this).text();
+    });
+    $('#makeRoom').on('click', function() {
+      //create a new room
+      app.roomname = $('#newRoomName').val();
     });
   }
 };
