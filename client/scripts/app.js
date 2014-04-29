@@ -7,7 +7,19 @@ var app = {
     setInterval(function() {
       that.fetch();
     }, 5000);
+
+    $("#enter").on('click', function() {
+      //send the message
+      var message = {
+        'username': window.location.search.split('=')[1],
+        'text': $('textarea').val(),
+        'roomname': 'main'
+      };
+      console.log('calling send');
+      app.send(message);
+    });
   },
+
   send: function(message) {
     $.ajax({
       // always use this url
@@ -41,13 +53,13 @@ var app = {
   },
   display: function(msgArray) {
     $('.chat').remove();
-    for (var i = msgArray.length-1; i >= 0; i--) {
+    for (var i = 0; i < msgArray.length; i++) {
       var message = msgArray[i];
       var username = message.username;
       var text = message.text;
       var $messageNode = $('<div class = "chat" data-message-id = "' + message.objectId + '"></div>');
       var $usernameNode = $('<div class = "username"></div>');
-      $usernameNode.text(username);
+      $usernameNode.text(username + ' in chatroom: ' + message.roomname);
       var $textNode = $('<div class = "text"></div>');
       $textNode.text(text + " @: " + message.createdAt);
       $messageNode.append($usernameNode);
