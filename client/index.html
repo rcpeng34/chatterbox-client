@@ -16,7 +16,16 @@
   <body>
     <div class="container">
       <div class="row">
-        <div class="twelve columns">
+        <div class="four columns">
+          <div id="left">
+            <h2>friends</h2>
+            New Friend: <input type="text" id="newFriendName"></input>
+            <button id="addFriend">Add Friend</button>
+            <div id="friendbar">
+            </div>
+          </div>
+        </div>
+        <div class="eight columns">
           <div id="main">
             <h2>chatterbox</h2>
             <textarea id="textbox"></textarea>
@@ -26,8 +35,12 @@
           </div>
         </div>
         <div class="four columns">
-          <div id="sidebar">
+          <div id="right">
             <h2>chatrooms</h2>
+            New Room: <input type="text" id="newRoomName"></input>
+            <button id="makeRoom">Make Room</button>
+            <div id="sidebar">
+            </div>
           </div>
         </div>
       </div>
