@@ -42,6 +42,9 @@ var app = {
         if (callback) {
           callback(response);
         }
+      },
+      error: function () {
+        console.log(type, data, callback);
       }
     });
   },
@@ -85,16 +88,21 @@ var app = {
     $('.chat').remove();
     for (var i = 0; i < msgArray.length; i++) {
       var message = msgArray[i];
-      var username = message.username;
-      var text = message.text;
-      var $messageNode = $('<div class = "chat" data-message-id = "' + message.objectId + '"></div>');
-      var $usernameNode = $('<div class = "username"></div>');
-      $usernameNode.text(username + ' in chatroom: ' + message.roomname);
-      var $textNode = $('<div class = "text"></div>');
-      $textNode.text(text + " @: " + message.createdAt);
-      $messageNode.append($usernameNode);
-      $messageNode.append($textNode);
-      $('#messages').append($messageNode);
+
+      var data = {
+        username: message.username,
+        description: message.text
+      };
+
+      var html = engine.render('messageTemplate', data);
+      // var $messageNode = $('<div class = "chat" data-message-id = "' + message.objectId + '"></div>');
+      // var $usernameNode = $('<div class = "username"></div>');
+      // $usernameNode.text(username + ' in chatroom: ' + message.roomname);
+      // var $textNode = $('<div class = "text"></div>');
+      // $textNode.text(text + " @: " + message.createdAt);
+      // $messageNode.append($usernameNode);
+      // $messageNode.append($textNode);
+      $('#messages').append(html);
       if ($('.chat').length > 100) {
         $('.chat:last-child').remove();
       }
