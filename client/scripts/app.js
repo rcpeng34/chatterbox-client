@@ -12,10 +12,10 @@ var app = {
 
     this.fetch();
     // Main fetch logic
-    setInterval(function() {
-      that.fetch(that.roomname, that.person);
-      that.getRoomName();
-    }, 5000);
+    // setInterval(function() {
+    //   that.fetch(that.roomname, that.person);
+    //   that.getRoomName();
+    // }, 5000);
 
     // Send logic
     $("#enter").on('click', function() {
@@ -43,9 +43,6 @@ var app = {
           callback(response);
         }
       },
-      error: function () {
-        console.log(type, data, callback);
-      }
     });
   },
 
@@ -62,7 +59,7 @@ var app = {
       searchData.where.roomname = app.roomname.trim();
     }
     if (person) {
-      searchData.where.username = app.person;
+      searchData.where.username = app.person.trim();
     }
     app.request('GET', searchData, function(response) {
       app.display(response.results);
@@ -83,7 +80,6 @@ var app = {
     });
   },
 
-
   display: function(msgArray) {
     $('.chat').remove();
     for (var i = 0; i < msgArray.length; i++) {
@@ -91,7 +87,8 @@ var app = {
 
       var data = {
         username: message.username,
-        description: message.text
+        description: message.text,
+        moment: moment(message.createdAt).startOf('hour').fromNow()
       };
 
       var html = engine.render('messageTemplate', data);
@@ -103,8 +100,9 @@ var app = {
   },
   buildSidebar: function(rooms) {
     $('#sidebar > *').remove();
-    $('#sidebar').append('<div class = allRooms>All</div');
+    $('#sidebar').append('<div class = "allRoom highlighted">All Rooms</div');
     $('.allRooms').on('click', function() {
+      app.highlight($(this));
       app.roomname = undefined;
     });
 
@@ -115,9 +113,9 @@ var app = {
     $('.roomname').on('click', function() {
       //update roomname variable
       app.roomname = $(this).text();
-      console.log(app.roomname);
       app.person = null;
       app.fetch(app.roomname, null);
+      app.highlight($(this));
     });
     $('#makeRoom').on('click', function() {
       //create a new room
@@ -126,9 +124,14 @@ var app = {
     });
   },
 
+  highlight: function($element) {
+    $('.highlighted').removeClass('highlighted');
+    $element.addClass('highlighted');
+  },
+
   buildFriendbar: function() {
     // set all users on click to search for no specific person
-    $('.allusers').on('click', function() { app.roomname = null; });
+    $('.allusers').on('click', function() { app.highlight($(this)); app.roomname = null; });
     // if you click on add friend, then you add friend and append it to the dom
     $('#addFriend').on('click', function() {
       // escape the text value
@@ -139,6 +142,7 @@ var app = {
         app.person = $(this).text();
         app.roomname = null;
         app.fetch(null, app.person);
+        app.highlight($(this));
       });
     });
   }
