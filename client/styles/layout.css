@@ -27,7 +27,7 @@ body {
 	margin-top: 30px;
 }
 
-#main {
+.chatboxes {
     margin: auto;
     text-align: left;
     background: white;
@@ -37,36 +37,38 @@ body {
     float: left;
 }
 
-#main, #left, #right {
+.chatboxes {
+    height: 400px;
+    overflow-y: scroll;
+    overflow-x: hidden;
     width: 100%;
-	padding-top: 35px;
 }
 
-#main h1 {
+.chatboxes h1 {
     margin-top: 0;
     margin-bottom: 5px;
     padding: 5px;
 }
 
-#main h1 span {
+.chatboxes h1 span {
     font-style:italic;
 }
 
-#main ul {
+.chatboxes ul {
     padding-left: 20px;
 }
 
-#main .error {
+.chatboxes .error {
     border: 1px solid red;
     background: #FDEFF0;
     padding: 20px;
 }
 
-#main .success {
+.chatboxes .success {
     margin-top: 25px;
 }
 
-#main .success code {
+.chatboxes .success code {
     font-size: 12px;
     color: green;
     line-height: 13px;
@@ -80,9 +82,12 @@ body {
 	border: solid #ddd;
 	border-width: 0 1px 1px 1px;
 	float: center;
+
 }
 #textbox {
-	width: 98%;
+    height: 20px;
+    float: left;
+    width: 80%;
 }
 
 form {
@@ -98,14 +103,29 @@ form input[type=text] {
     padding: 5px;
 }
 
+.inputArea {
+    display: block ;
+    width: 100%;
+}
+
+.inputArea button {
+    float: left;
+}
+
+.chatContainer {
+    padding: 2px 15px;
+}
+
 .chat {
-    padding: 5px;
-    margin-bottom: 5px;
+    margin-top: 10px;
     background-color: #eee;
+    text-align: left;
 }
 
 .chat .username {
     font-weight: 800;
+    text-align: left;
+    text-indent: 10px;
 }
 
 .chat:hover {
@@ -122,6 +142,21 @@ form input[type=text] {
     padding: 10px;
 }
 
+#main {
+    background-color: white;
+    padding: 17px;
+}
+#left, #right {
+    margin-top: 20px;
+}
+#addFriend, #makeRoom {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.highlighted {
+    background-color: #eee;
+}
 
 /* #Page Styles
 ================================================== */
